@@ -191,3 +191,64 @@ players.forEach((player) => {
     }
   }
 });
+// Display available options for the player
+function displayOptions() {
+    // Show hit and stand options
+    document.getElementById("hit-button").style.display = "inline";
+    document.getElementById("stand-button").style.display = "inline";
+    
+    // Show double down option if applicable
+    if (canDoubleDown()) {
+      document.getElementById("double-button").style.display = "inline";
+    }
+    
+    // Show split option if applicable
+    if (canSplit()) {
+      document.getElementById("split-button").style.display = "inline";
+    }
+  }
+  
+  // Prompt player to choose an action
+  function promptPlayer() {
+    return new Promise((resolve) => {
+      // Show available options
+      displayOptions();
+      
+      // Listen for button clicks
+      document.getElementById("hit-button").addEventListener("click", () => {
+        resolve("hit");
+      });
+      document.getElementById("stand-button").addEventListener("click", () => {
+        resolve("stand");
+      });
+      document.getElementById("double-button").addEventListener("click", () => {
+        resolve("double");
+      });
+      document.getElementById("split-button").addEventListener("click", () => {
+        resolve("split");
+      });
+    });
+  }
+  
+  // Perform player's chosen action
+  async function playerTurn(player) {
+    while (true) {
+      // Prompt player for action
+      const action = await promptPlayer();
+      
+      // Perform action
+      if (action === "hit") {
+        hit(player);
+      } else if (action === "stand") {
+        stand(player);
+        break;
+      } else if (action === "double") {
+        doubleDown(player);
+        break;
+      } else if (action === "split") {
+        split(player);
+        break;
+      }
+    }
+  }
+  
