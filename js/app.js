@@ -1,3 +1,24 @@
+const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
+const values = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+
+
+let currentPlayerIndex = 0;
+let dealerIndex;
+let playerBets = [];
+let playerMoney = [];
+let playerInsurance = [];
+
+const gameWrapper = document.getElementById('gameWrapper');
+const dealBtn = document.getElementById('dealBtn');
+const hitBtn = document.getElementById('hitBtn');
+const standBtn = document.getElementById('standBtn');
+const doubleBtn = document.getElementById('doubleBtn');
+const splitBtn = document.getElementById('splitBtn');
+const insuranceInput = document.getElementById('insuranceInput');
+const playerMoneySpan = document.querySelectorAll('.player-money');
+const playerBetSpan = document.querySelectorAll('.player-bet');
+const playerInsuranceSpan = document.querySelectorAll('.player-insurance');
+const message = document.getElementById('message');
 const deckContainer = document.querySelector(".deck-container");
 const betInput = document.querySelector("#bet-input");
 const hitButton = document.querySelector("#hit-button");
