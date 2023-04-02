@@ -35,3 +35,24 @@ betInput.addEventListener("change", () => {
   }
 });
 
+
+hitButton.addEventListener("click", () => {
+    hitPlayer();
+  });
+  
+  standButton.addEventListener("click", () => {
+    standPlayer();
+  });
+  
+  doubleButton.addEventListener("click", () => {
+    doubleDown();
+  });
+  
+  splitButton.addEventListener("click", () => {
+    splitCards();
+  });
+  
+  resetButton.addEventListener("click", () => {
+    resetGame();
+  });
+
