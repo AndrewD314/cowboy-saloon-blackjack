@@ -163,3 +163,15 @@ function getCardValue(card) {
         return 10;
     }
   }
+
+  // Shuffle the deck using a random permutation
+function shuffleDeck(deck) {
+    for (let i = 0; i < deck.length; i++) {
+      let randomIndex = Math.floor(Math.random() * deck.length);
+      let temp = deck[i];
+      deck[i] = deck[randomIndex];
+      deck[randomIndex] = temp;
+    }
+  }
+
+  
