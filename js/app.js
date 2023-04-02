@@ -174,4 +174,28 @@ function shuffleDeck(deck) {
     }
   }
 
+  // Create a list of player objects, including the real player and computer players
+function createPlayers(numPlayers) {
+    let player = {
+      name: 'Player',
+      hand: [],
+      money: 1000,
+      bet: 0,
+      insurance: 0,
+      status: ''
+    };
+    players.push(player);
+  
+    for (let i = 1; i <= numPlayers; i++) {
+      let computerPlayer = {
+        name: 'Computer Player ' + i,
+        hand: [],
+        money: 1000,
+        bet: 0,
+        insurance: 0,
+        status: ''
+      };
+      players.push(computerPlayer);
+    }
+  }
   
