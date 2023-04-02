@@ -1,211 +1,193 @@
-const suits = ['hearts', 'diamonds', 'clubs', 'spades'];
-const values = ['Ace', '2', '3', '4', '5', '6', '7', '8', '9', '10', 'Jack', 'Queen', 'King'];
+// Constants and Variables
+
+const suits = ["hearts", "diamonds", "clubs", "spades"];
+const values = [
+  "Ace",
+  "2",
+  "3",
+  "4",
+  "5",
+  "6",
+  "7",
+  "8",
+  "9",
+  "10",
+  "Jack",
+  "Queen",
+  "King"
+];
+const numPlayers = 3; // number of players, including the player
+
+const playerHand = [];
+const dealerHand = [];
+const betAmounts = [];
+const maxBet = 100; // max bet amount allowed
+const minBet = 10; // min bet amount allowed
+let currentPlayer = 0; // index of the current player in the players array
+let dealerIndex = 0; // index of the dealer in the players array
+let gameOver = false;
 
 
-let currentPlayerIndex = 0;
-let dealerIndex;
-let playerBets = [];
-let playerMoney = [];
-let playerInsurance = [];
+// Deal cards
+function dealCards(players, deck) {
+    for (let i = 0; i < 2; i++) {
+      players.forEach(player => {
+        player.cards.push(deck.pop());
+      });
+    }
+  }
+  
+  // Player's turn
+  function playerTurn(player, deck) {
+    while (player.totalPoints < 21) {
+      const decision = prompt("What would you like to do? (hit/stand/double/split)");
+      switch (decision) {
+        case "hit":
+          player.cards.push(deck.pop());
+          calculatePoints(player);
+          break;
+        case "stand":
+          return;
+        case "double":
+          player.chips -= player.currentBet;
+          player.currentBet *= 2;
+          player.cards.push(deck.pop());
+          calculatePoints(player);
+          return;
+        case "split":
+          // handle splitting logic
+          break;
+        default:
+          alert("Invalid decision. Please choose hit, stand, double, or split.");
+          break;
+      }
+    }
+  }
+  
+  // Computer players' turn
+  function computerTurn(player, deck) {
+    while (player.totalPoints < 17) {
+      player.cards.push(deck.pop());
+      calculatePoints(player);
+    }
+  }
+  
+  // House's turn
+  function houseTurn(house, deck) {
+    while (house.totalPoints < 17) {
+      house.cards.push(deck.pop());
+      calculatePoints(house);
+    }
+  }
+  
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+  class Player {
+    constructor(name, chips) {
+      this.name = name;
+      this.hand = [];
+      this.bet = 0;
+      this.chips = chips;
+    }
+    
+    // Add a card to the player's hand
+    hit(card) {
+      this.hand.push(card);
+    }
+    
+    // Return the player's current hand value
+    get handValue() {
+      let value = 0;
+      let numAces = 0;
+      for (let card of this.hand) {
+        if (card.value === "A") {
+          numAces++;
+          value += 11;
+        } else if (card.value === "J" || card.value === "Q" || card.value === "K") {
+          value += 10;
+        } else {
+          value += parseInt(card.value);
+        }
+      }
+      while (value > 21 && numAces > 0) {
+        value -= 10;
+        numAces--;
+      }
+      return value;
+    }
+  }
+  // define bet constants
+const MIN_BET = 5;
+const MAX_BET = 100;
+const SIDE_BET = 10;
 
-const gameWrapper = document.getElementById('gameWrapper');
-const dealBtn = document.getElementById('dealBtn');
-const hitBtn = document.getElementById('hitBtn');
-const standBtn = document.getElementById('standBtn');
-const doubleBtn = document.getElementById('doubleBtn');
-const splitBtn = document.getElementById('splitBtn');
-const insuranceInput = document.getElementById('insuranceInput');
-const playerMoneySpan = document.querySelectorAll('.player-money');
-const playerBetSpan = document.querySelectorAll('.player-bet');
-const playerInsuranceSpan = document.querySelectorAll('.player-insurance');
-const message = document.getElementById('message');
-const deckContainer = document.querySelector(".deck-container");
-const betInput = document.querySelector("#bet-input");
-const hitButton = document.querySelector("#hit-button");
-const standButton = document.querySelector("#stand-button");
-const doubleButton = document.querySelector("#double-button");
-const splitButton = document.querySelector("#split-button");
-const resetButton = document.querySelector("#reset-button");
-const messageContainer = document.querySelector(".message-container");
-const playerCardsContainer = document.querySelector(".player-cards-container");
-const playerScoreContainer = document.querySelector(".player-score-container");
-const computer1CardsContainer = document.querySelector(".computer-1-cards-container");
-const computer1ScoreContainer = document.querySelector(".computer-1-score-container");
-const computer2CardsContainer = document.querySelector(".computer-2-cards-container");
-const computer2ScoreContainer = document.querySelector(".computer-2-score-container");
-const houseCardsContainer = document.querySelector(".house-cards-container");
-const houseScoreContainer = document.querySelector(".house-score-container");
+// create an array of player objects
+let players = [
+  {
+    name: "Player",
+    bet: 0,
+    hand: [],
+    sideBet: 0,
+    bankroll: 1000
+  },
+  {
+    name: "Computer Player 1",
+    bet: 0,
+    hand: [],
+    bankroll: 1000
+  },
+  {
+    name: "Computer Player 2",
+    bet: 0,
+    hand: [],
+    bankroll: 1000
+  }
+];
 
+// prompt each player to place a bet
+players.forEach((player) => {
+  if (player.name !== "House") {
+    let betAmount = parseInt(prompt(`${player.name}, place your bet (between ${MIN_BET} and ${MAX_BET}): `));
+    while (betAmount < MIN_BET || betAmount > MAX_BET) {
+      betAmount = parseInt(prompt(`Invalid bet. Please enter a bet between ${MIN_BET} and ${MAX_BET}: `));
+    }
+    player.bet = betAmount;
+    player.bankroll -= betAmount;
 
-let deck = createDeck();
-shuffleDeck(deck);
-let players = createPlayers();
-let house = {hand: [], score: 0};
-
-betInput.addEventListener("change", () => {
-  const bet = parseInt(betInput.value);
-  if (bet <= players[0].bankroll) {
-    players[0].bet = bet;
-    players[0].bankroll -= bet;
-    displayPlayerBankroll();
-  } else {
-    betInput.value = players[0].bankroll;
-    players[0].bet = players[0].bankroll;
-    players[0].bankroll = 0;
-    displayPlayerBankroll();
+    let sideBetAmount = parseInt(prompt(`${player.name}, place your side bet (up to ${SIDE_BET}): `));
+    while (sideBetAmount < 0 || sideBetAmount > SIDE_BET) {
+      sideBetAmount = parseInt(prompt(`Invalid side bet. Please enter a side bet between 0 and ${SIDE_BET}: `));
+    }
+    player.sideBet = sideBetAmount;
+    player.bankroll -= sideBetAmount;
   }
 });
 
+// deal two cards to each player and the house, alternating between each player and the house
+let deck = createDeck();
+shuffleDeck(deck);
 
-hitButton.addEventListener("click", () => {
-    hitPlayer();
-  });
-  
-  standButton.addEventListener("click", () => {
-    standPlayer();
-  });
-  
-  doubleButton.addEventListener("click", () => {
-    doubleDown();
-  });
-  
-  splitButton.addEventListener("click", () => {
-    splitCards();
-  });
-  
-  resetButton.addEventListener("click", () => {
-    resetGame();
-  });
-
-  function displayPlayerBankroll() {
-    const bankrollContainer = document.querySelector(".bankroll-container");
-    bankrollContainer.textContent = `Bankroll: $${players[0].bankroll}`;
+players.forEach((player) => {
+  if (player.name !== "House") {
+    player.hand.push(deck.pop());
+    player.hand.push(deck.pop());
+  } else {
+    player.hand.push(deck.pop());
   }
-  
-  function displayPlayerCards() {
-    playerCardsContainer.innerHTML = "";
-    for (let card of players[0].hand) {
-      let cardElement = document.createElement("div");
-      cardElement.classList.add("card");
-      let cardImage = document.createElement("img");
-      cardImage.src = card.image;
-      cardImage.alt = card.alt;
-      cardElement.appendChild(cardImage);
-      playerCardsContainer.appendChild(cardElement);
+});
+
+// check if any player has blackjack
+players.forEach((player) => {
+  if (player.hand.length === 2) {
+    if ((player.hand[0].value === 1 && player.hand[1].value === 10) || (player.hand[0].value === 10 && player.hand[1].value === 1)) {
+      console.log(`${player.name} has Blackjack!`);
+      player.bankroll += player.bet * 1.5;
+      player.bet = 0;
     }
   }
-  
-  function displayPlayerScore() {
-    playerScoreContainer.textContent = `Score: ${players[0].score}`;
-  }
-  
-  function displayComputer1Cards() {
-    computer1CardsContainer.innerHTML = "";
-    for (let card of players[1].hand) {
-      let cardElement = document.createElement("div");
-      cardElement.classList.add("card");
-      let cardImage = document.createElement("img");
-      cardImage.src = "images/card-back.png";
-      cardImage.alt = "Card back";
-      cardElement.appendChild(cardImage);
-      computer1CardsContainer.appendChild(cardElement);
-    }
-  }
-  
-  function displayComputer1Score() {
-    computer1ScoreContainer.textContent = `Score: ${players[1].score}`;
-  }
-  
-  function displayComputer2Cards() {
-    computer2CardsContainer.innerHTML = "";
-    for (let card of players[2].hand) {
-      let cardElement = document.createElement("div");
-      cardElement.classList.add("card");
-      let cardImage = document.createElement("img");
-      cardImage.src = "images/card-back.png";
-      cardImage.alt = "Card back";
-    }}
-
-    function createDeck() {
-        for (let suit in suits) {
-          for (let value in values) {
-            let card = {
-              suit: suits[suit],
-              value: values[value]
-            };
-            deck.push(card);
-          }
-        }
-      }
-      
-      // Define Ace's value as 1 or 11 depending on hand value
-function getCardValue(card) {
-    switch (card.value) {
-      case 'Ace':
-        return 11;
-      case '2':
-        return 2;
-      case '3':
-        return 3;
-      case '4':
-        return 4;
-      case '5':
-        return 5;
-      case '6':
-        return 6;
-      case '7':
-        return 7;
-      case '8':
-        return 8;
-      case '9':
-        return 9;
-      default:
-        return 10;
-    }
-  }
-
-  // Shuffle the deck using a random permutation
-function shuffleDeck(deck) {
-    for (let i = 0; i < deck.length; i++) {
-      let randomIndex = Math.floor(Math.random() * deck.length);
-      let temp = deck[i];
-      deck[i] = deck[randomIndex];
-      deck[randomIndex] = temp;
-    }
-  }
-
-  // Create a list of player objects, including the real player and computer players
-function createPlayers(numPlayers) {
-    let player = {
-      name: 'Player',
-      hand: [],
-      money: 1000,
-      bet: 0,
-      insurance: 0,
-      status: ''
-    };
-    players.push(player);
-  
-    for (let i = 1; i <= numPlayers; i++) {
-      let computerPlayer = {
-        name: 'Computer Player ' + i,
-        hand: [],
-        money: 1000,
-        bet: 0,
-        insurance: 0,
-        status: ''
-      };
-      players.push(computerPlayer);
-    }
-  }
-  
-
-  // Prompt each player to place a bet including side bets
-function placeBets() {
-    for (let i = 0; i < players.length; i++) {
-      let bet = parseInt(prompt(players[i].name + ', place your bet (minimum bet is 10): '));
-      while (bet < 10 || bet > players[i].money) {
-        bet = parseInt(prompt(players[i].name + ', place a valid bet (minimum bet is 10 and cannot exceed your current money): '));
-      }
-      players[i].bet = bet;
-      player
+});
