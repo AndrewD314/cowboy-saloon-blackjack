@@ -14,3 +14,24 @@ const computer2CardsContainer = document.querySelector(".computer-2-cards-contai
 const computer2ScoreContainer = document.querySelector(".computer-2-score-container");
 const houseCardsContainer = document.querySelector(".house-cards-container");
 const houseScoreContainer = document.querySelector(".house-score-container");
+
+
+let deck = createDeck();
+shuffleDeck(deck);
+let players = createPlayers();
+let house = {hand: [], score: 0};
+
+betInput.addEventListener("change", () => {
+  const bet = parseInt(betInput.value);
+  if (bet <= players[0].bankroll) {
+    players[0].bet = bet;
+    players[0].bankroll -= bet;
+    displayPlayerBankroll();
+  } else {
+    betInput.value = players[0].bankroll;
+    players[0].bet = players[0].bankroll;
+    players[0].bankroll = 0;
+    displayPlayerBankroll();
+  }
+});
+
