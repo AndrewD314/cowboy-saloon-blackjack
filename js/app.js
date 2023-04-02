@@ -56,3 +56,51 @@ hitButton.addEventListener("click", () => {
     resetGame();
   });
 
+  function displayPlayerBankroll() {
+    const bankrollContainer = document.querySelector(".bankroll-container");
+    bankrollContainer.textContent = `Bankroll: $${players[0].bankroll}`;
+  }
+  
+  function displayPlayerCards() {
+    playerCardsContainer.innerHTML = "";
+    for (let card of players[0].hand) {
+      let cardElement = document.createElement("div");
+      cardElement.classList.add("card");
+      let cardImage = document.createElement("img");
+      cardImage.src = card.image;
+      cardImage.alt = card.alt;
+      cardElement.appendChild(cardImage);
+      playerCardsContainer.appendChild(cardElement);
+    }
+  }
+  
+  function displayPlayerScore() {
+    playerScoreContainer.textContent = `Score: ${players[0].score}`;
+  }
+  
+  function displayComputer1Cards() {
+    computer1CardsContainer.innerHTML = "";
+    for (let card of players[1].hand) {
+      let cardElement = document.createElement("div");
+      cardElement.classList.add("card");
+      let cardImage = document.createElement("img");
+      cardImage.src = "images/card-back.png";
+      cardImage.alt = "Card back";
+      cardElement.appendChild(cardImage);
+      computer1CardsContainer.appendChild(cardElement);
+    }
+  }
+  
+  function displayComputer1Score() {
+    computer1ScoreContainer.textContent = `Score: ${players[1].score}`;
+  }
+  
+  function displayComputer2Cards() {
+    computer2CardsContainer.innerHTML = "";
+    for (let card of players[2].hand) {
+      let cardElement = document.createElement("div");
+      cardElement.classList.add("card");
+      let cardImage = document.createElement("img");
+      cardImage.src = "images/card-back.png";
+      cardImage.alt = "Card back";
+    }}
