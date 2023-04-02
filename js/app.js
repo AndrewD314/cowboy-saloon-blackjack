@@ -314,3 +314,42 @@ function checkBust(player) {
     house.score = 0;
     house.hand = [];
   }
+
+  // determine winners and pay out bets
+function determineWinners() {
+    let playerHandValue = getHandValue(player.hand);
+    let dealerHandValue = getHandValue(dealer.hand);
+    
+    // determine winner
+    if (playerHandValue > 21 || dealerHandValue === 21 || dealerHandValue < playerHandValue) {
+      // dealer wins
+      dealer.money += player.bet;
+      player.money -= player.bet;
+    } else if (dealerHandValue > 21 || playerHandValue === 21 || playerHandValue > dealerHandValue) {
+      // player wins
+      player.money += player.bet;
+      dealer.money -= player.bet;
+    } else {
+      // tie
+      console.log("It's a tie!");
+    }
+  
+    // pay out side bets (if any)
+    // ...
+  
+    // reset game for the next hand
+    resetGame();
+  }
+  
+  // reset game for the next hand
+  function resetGame() {
+    // reset variables and clear UI
+    player.hand = [];
+    dealer.hand = [];
+    player.bet = 0;
+    // ...
+  
+    // prompt player for a new bet
+    getPlayerBet();
+  }
+  
