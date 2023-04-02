@@ -199,3 +199,13 @@ function createPlayers(numPlayers) {
     }
   }
   
+
+  // Prompt each player to place a bet including side bets
+function placeBets() {
+    for (let i = 0; i < players.length; i++) {
+      let bet = parseInt(prompt(players[i].name + ', place your bet (minimum bet is 10): '));
+      while (bet < 10 || bet > players[i].money) {
+        bet = parseInt(prompt(players[i].name + ', place a valid bet (minimum bet is 10 and cannot exceed your current money): '));
+      }
+      players[i].bet = bet;
+      player
