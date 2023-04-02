@@ -251,4 +251,66 @@ function displayOptions() {
       }
     }
   }
+  // check if the player or computer has busted (exceeded 21 points)
+function checkBust(player) {
+    if (player.score > 21) {
+      player.isBust = true;
+      return true;
+    } else {
+      return false;
+    }
+  }
   
+  // end players turn
+  function endPlayerTurn(player) {
+    console.log(`${player.name}'s turn has ended.`);
+  }
+  
+  // perform the computer players action, such as hitting or standing
+  function computerTurn(computerPlayer) {
+    while (computerPlayer.score < 17) {
+      hit(computerPlayer);
+    }
+  }
+  
+  // end the computer players turn
+  function endComputerTurn(computerPlayer) {
+    console.log(`${computerPlayer.name}'s turn has ended.`);
+  }
+  
+  // determine winners and pay out bets
+  function determineWinner(players, house) {
+    // Determine house score
+    while (house.score < 17) {
+      hit(house);
+    }
+  
+    // Check for winners and losers
+    players.forEach(function (player) {
+      if (!player.isBust) {
+        if (player.score > house.score || house.isBust) {
+          console.log(`${player.name} wins!`);
+          player.money += player.bet * 2;
+        } else if (player.score === house.score) {
+          console.log(`${player.name} pushes.`);
+          player.money += player.bet;
+        } else {
+          console.log(`${player.name} loses.`);
+        }
+      } else {
+        console.log(`${player.name} busted.`);
+      }
+    });
+  
+    // Reset players and house
+    players.forEach(function (player) {
+      player.isBust = false;
+      player.score = 0;
+      player.hand = [];
+      player.bet = 0;
+      player.choice = "";
+    });
+    house.isBust = false;
+    house.score = 0;
+    house.hand = [];
+  }
