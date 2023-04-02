@@ -125,3 +125,16 @@ hitButton.addEventListener("click", () => {
       cardImage.src = "images/card-back.png";
       cardImage.alt = "Card back";
     }}
+
+    function createDeck() {
+        for (let suit in suits) {
+          for (let value in values) {
+            let card = {
+              suit: suits[suit],
+              value: values[value]
+            };
+            deck.push(card);
+          }
+        }
+      }
+      
