@@ -1,82 +1,28 @@
-* {
-	box-sizing: border-box;
-	margin: 0;
-	padding: 0;
-}
 body {
-	background-color: #8B0000;
-	color: white;
-	font-family: Arial, sans-serif;
+    font-family: Arial, Helvetica, sans-serif;
+    text-align: center;
 }
 
-.container {
-	max-width: 800px;
-	margin: 0 auto;
-	padding: 20px;
+#dealer-cards img {
+    height: 175px;
+    width: 125px;
+    margin: 1px;
 }
 
-.header {
-	text-align: center;
-	margin-bottom: 20px;
+#your-cards img {
+    height: 175px;
+    width: 125px;
+    margin: 1px;
 }
 
-.table {
-	display: flex;
-	justify-content: space-around;
-	align-items: flex-start;
-	margin-bottom: 20px;
+#hit {
+    width: 100px;
+    height: 50px;
+    font-size: 20px;
 }
 
-.dealer,
-.player {
-	background-color: #333;
-	padding: 20px;
-	border-radius: 10px;
-	flex-basis: 45%;
-}
-
-.dealer h2,
-.player h2 {
-	margin-bottom: 10px;
-}
-
-.hand {
-	display: flex;
-	flex-wrap: wrap;
-}
-
-.card {
-	width: 70px;
-	height: 100px;
-	background-color: white;
-	margin-right: 10px;
-	margin-bottom: 10px;
-	border-radius: 5px;
-}
-
-.card:last-child {
-	margin-right: 0;
-}
-
-.controls {
-	display: flex;
-	justify-content: center;
-}
-button {
-	padding: 10px;
-	margin-right: 10px;
-	font-size: 16px;
-	background-color: #333;
-	color: white;
-	border: none;
-	border-radius: 5px;
-	cursor: pointer;
-}
-
-button:hover {
-	background-color: #555;
-}
-
-button:active {
-	background-color: #777;
+#stay {
+    width: 100px;
+    height: 50px;
+    font-size: 20px;
 }
