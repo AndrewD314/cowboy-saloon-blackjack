@@ -1,355 +1,147 @@
-// Constants and Variables
 
-const suits = ["hearts", "diamonds", "clubs", "spades"];
-const values = [
-  "Ace",
-  "2",
-  "3",
-  "4",
-  "5",
-  "6",
-  "7",
-  "8",
-  "9",
-  "10",
-  "Jack",
-  "Queen",
-  "King"
-];
-const numPlayers = 3; // number of players, including the player
+let dealerSum = 0
+let yourSum = 0
 
-const playerHand = [];
-const dealerHand = [];
-const betAmounts = [];
-const maxBet = 100; // max bet amount allowed
-const minBet = 10; // min bet amount allowed
-let currentPlayer = 0; // index of the current player in the players array
-let dealerIndex = 0; // index of the dealer in the players array
-let gameOver = false;
+let dealerAceCount = 0
+let yourAceCount = 0
 
+let hidden
+let deck
 
-// Deal cards
-function dealCards(players, deck) {
+let canHit = true //allows the player (you) to draw while yourSum <= 21
+
+window.onload = function() {
+    buildDeck()
+    shuffleDeck()
+    startGame()
+}
+
+function buildDeck() {
+    let values = ["A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"];
+    let types = ["C", "D", "H", "S"]
+    deck = []
+
+    for (let i = 0; i < types.length; i++) {
+        for (let j = 0; j < values.length; j++) {
+            deck.push(values[j] + "-" + types[i]) //A-C -> K-C, A-D -> K-D
+        }
+    }
+}
+
+function shuffleDeck() {
+    for (let i = 0; i < deck.length; i++) {
+        let j = Math.floor(Math.random() * deck.length) // (0-1) * 52 => (0-51.9999)
+        let temp = deck[i]
+        deck[i] = deck[j]
+        deck[j] = temp
+    }
+    console.log(deck)
+}
+
+function startGame() {
+    hidden = deck.pop()
+    dealerSum += getValue(hidden)
+    dealerAceCount += checkAce(hidden)
+    // console.log(hidden);
+    // console.log(dealerSum);
+    while (dealerSum < 17) {
+        //<img src="./cards/4-C.png">
+        let cardImg = document.createElement("img")
+        let card = deck.pop()
+        cardImg.src = "./cards/" + card + ".png"
+        dealerSum += getValue(card)
+        dealerAceCount += checkAce(card)
+        document.getElementById("dealer-cards").append(cardImg)
+    }
+    console.log(dealerSum)
+
     for (let i = 0; i < 2; i++) {
-      players.forEach(player => {
-        player.cards.push(deck.pop());
-      });
+        let cardImg = document.createElement("img")
+        let card = deck.pop()
+        cardImg.src = "./cards/" + card + ".png"
+        yourSum += getValue(card)
+        yourAceCount += checkAce(card)
+        document.getElementById("your-cards").append(cardImg)
     }
-  }
-  
-  // Player's turn
-  function playerTurn(player, deck) {
-    while (player.totalPoints < 21) {
-      const decision = prompt("What would you like to do? (hit/stand/double/split)");
-      switch (decision) {
-        case "hit":
-          player.cards.push(deck.pop());
-          calculatePoints(player);
-          break;
-        case "stand":
-          return;
-        case "double":
-          player.chips -= player.currentBet;
-          player.currentBet *= 2;
-          player.cards.push(deck.pop());
-          calculatePoints(player);
-          return;
-        case "split":
-          // handle splitting logic
-          break;
-        default:
-          alert("Invalid decision. Please choose hit, stand, double, or split.");
-          break;
-      }
+
+    console.log(yourSum)
+    document.getElementById("hit").addEventListener("click", hit)
+    document.getElementById("stay").addEventListener("click", stay)
+
+}
+
+function hit() {
+    if (!canHit) {
+        return
     }
-  }
-  
-  // Computer players' turn
-  function computerTurn(player, deck) {
-    while (player.totalPoints < 17) {
-      player.cards.push(deck.pop());
-      calculatePoints(player);
+
+    let cardImg = document.createElement("img")
+    let card = deck.pop()
+    cardImg.src = "./cards/" + card + ".png"
+    yourSum += getValue(card)
+    yourAceCount += checkAce(card)
+    document.getElementById("your-cards").append(cardImg)
+
+    if (reduceAce(yourSum, yourAceCount) > 21) { //A, J, 8 -> 1 + 10 + 8
+        canHit = false
     }
-  }
-  
-  // House's turn
-  function houseTurn(house, deck) {
-    while (house.totalPoints < 17) {
-      house.cards.push(deck.pop());
-      calculatePoints(house);
+
+}
+
+function stay() {
+    dealerSum = reduceAce(dealerSum, dealerAceCount)
+    yourSum = reduceAce(yourSum, yourAceCount)
+
+    canHit = false
+    document.getElementById("hidden").src = "./cards/" + hidden + ".png"
+
+    let message = ""
+    if (yourSum > 21) {
+        message = "You Lose!"
     }
-  }
-  
-  function shuffle(array) {
-    for (let i = array.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [array[i], array[j]] = [array[j], array[i]];
+    else if (dealerSum > 21) {
+        message = "You win!"
     }
-    return array;
-  }
-  class Player {
-    constructor(name, chips) {
-      this.name = name;
-      this.hand = [];
-      this.bet = 0;
-      this.chips = chips;
+    //both you and dealer <= 21
+    else if (yourSum == dealerSum) {
+        message = "Tie!"
     }
-    
-    // Add a card to the player's hand
-    hit(card) {
-      this.hand.push(card);
+    else if (yourSum > dealerSum) {
+        message = "You Win!"
     }
-    
-    // Return the player's current hand value
-    get handValue() {
-      let value = 0;
-      let numAces = 0;
-      for (let card of this.hand) {
-        if (card.value === "A") {
-          numAces++;
-          value += 11;
-        } else if (card.value === "J" || card.value === "Q" || card.value === "K") {
-          value += 10;
-        } else {
-          value += parseInt(card.value);
+    else if (yourSum < dealerSum) {
+        message = "You Lose!"
+    }
+
+    document.getElementById("dealer-sum").innerText = dealerSum
+    document.getElementById("your-sum").innerText = yourSum
+    document.getElementById("results").innerText = message
+}
+
+function getValue(card) {
+    let data = card.split("-") // "4-C" -> ["4", "C"]
+    let value = data[0]
+
+    if (isNaN(value)) { //A J Q K
+        if (value == "A") {
+            return 11
         }
-      }
-      while (value > 21 && numAces > 0) {
-        value -= 10;
-        numAces--;
-      }
-      return value;
+        return 10
     }
-  }
-  // define bet constants
-const MIN_BET = 5;
-const MAX_BET = 100;
-const SIDE_BET = 10;
+    return parseInt(value)
+}
 
-// create an array of player objects
-let players = [
-  {
-    name: "Player",
-    bet: 0,
-    hand: [],
-    sideBet: 0,
-    bankroll: 1000
-  },
-  {
-    name: "Computer Player 1",
-    bet: 0,
-    hand: [],
-    bankroll: 1000
-  },
-  {
-    name: "Computer Player 2",
-    bet: 0,
-    hand: [],
-    bankroll: 1000
-  }
-];
+function checkAce(card) {
+    if (card[0] == "A") {
+        return 1
+    }
+    return 0
+}
 
-// prompt each player to place a bet
-players.forEach((player) => {
-  if (player.name !== "House") {
-    let betAmount = parseInt(prompt(`${player.name}, place your bet (between ${MIN_BET} and ${MAX_BET}): `));
-    while (betAmount < MIN_BET || betAmount > MAX_BET) {
-      betAmount = parseInt(prompt(`Invalid bet. Please enter a bet between ${MIN_BET} and ${MAX_BET}: `));
+function reduceAce(playerSum, playerAceCount) {
+    while (playerSum > 21 && playerAceCount > 0) {
+        playerSum -= 10
+        playerAceCount -= 1
     }
-    player.bet = betAmount;
-    player.bankroll -= betAmount;
-
-    let sideBetAmount = parseInt(prompt(`${player.name}, place your side bet (up to ${SIDE_BET}): `));
-    while (sideBetAmount < 0 || sideBetAmount > SIDE_BET) {
-      sideBetAmount = parseInt(prompt(`Invalid side bet. Please enter a side bet between 0 and ${SIDE_BET}: `));
-    }
-    player.sideBet = sideBetAmount;
-    player.bankroll -= sideBetAmount;
-  }
-});
-
-// deal two cards to each player and the house, alternating between each player and the house
-let deck = createDeck();
-shuffleDeck(deck);
-
-players.forEach((player) => {
-  if (player.name !== "House") {
-    player.hand.push(deck.pop());
-    player.hand.push(deck.pop());
-  } else {
-    player.hand.push(deck.pop());
-  }
-});
-
-// check if any player has blackjack
-players.forEach((player) => {
-  if (player.hand.length === 2) {
-    if ((player.hand[0].value === 1 && player.hand[1].value === 10) || (player.hand[0].value === 10 && player.hand[1].value === 1)) {
-      console.log(`${player.name} has Blackjack!`);
-      player.bankroll += player.bet * 1.5;
-      player.bet = 0;
-    }
-  }
-});
-// Display available options for the player
-function displayOptions() {
-    // Show hit and stand options
-    document.getElementById("hit-button").style.display = "inline";
-    document.getElementById("stand-button").style.display = "inline";
-    
-    // Show double down option if applicable
-    if (canDoubleDown()) {
-      document.getElementById("double-button").style.display = "inline";
-    }
-    
-    // Show split option if applicable
-    if (canSplit()) {
-      document.getElementById("split-button").style.display = "inline";
-    }
-  }
-  
-  // Prompt player to choose an action
-  function promptPlayer() {
-    return new Promise((resolve) => {
-      // Show available options
-      displayOptions();
-      
-      // Listen for button clicks
-      document.getElementById("hit-button").addEventListener("click", () => {
-        resolve("hit");
-      });
-      document.getElementById("stand-button").addEventListener("click", () => {
-        resolve("stand");
-      });
-      document.getElementById("double-button").addEventListener("click", () => {
-        resolve("double");
-      });
-      document.getElementById("split-button").addEventListener("click", () => {
-        resolve("split");
-      });
-    });
-  }
-  
-  // Perform player's chosen action
-  async function playerTurn(player) {
-    while (true) {
-      // Prompt player for action
-      const action = await promptPlayer();
-      
-      // Perform action
-      if (action === "hit") {
-        hit(player);
-      } else if (action === "stand") {
-        stand(player);
-        break;
-      } else if (action === "double") {
-        doubleDown(player);
-        break;
-      } else if (action === "split") {
-        split(player);
-        break;
-      }
-    }
-  }
-  // check if the player or computer has busted (exceeded 21 points)
-function checkBust(player) {
-    if (player.score > 21) {
-      player.isBust = true;
-      return true;
-    } else {
-      return false;
-    }
-  }
-  
-  // end players turn
-  function endPlayerTurn(player) {
-    console.log(`${player.name}'s turn has ended.`);
-  }
-  
-  // perform the computer players action, such as hitting or standing
-  function computerTurn(computerPlayer) {
-    while (computerPlayer.score < 17) {
-      hit(computerPlayer);
-    }
-  }
-  
-  // end the computer players turn
-  function endComputerTurn(computerPlayer) {
-    console.log(`${computerPlayer.name}'s turn has ended.`);
-  }
-  
-  // determine winners and pay out bets
-  function determineWinner(players, house) {
-    // Determine house score
-    while (house.score < 17) {
-      hit(house);
-    }
-  
-    // Check for winners and losers
-    players.forEach(function (player) {
-      if (!player.isBust) {
-        if (player.score > house.score || house.isBust) {
-          console.log(`${player.name} wins!`);
-          player.money += player.bet * 2;
-        } else if (player.score === house.score) {
-          console.log(`${player.name} pushes.`);
-          player.money += player.bet;
-        } else {
-          console.log(`${player.name} loses.`);
-        }
-      } else {
-        console.log(`${player.name} busted.`);
-      }
-    });
-  
-    // Reset players and house
-    players.forEach(function (player) {
-      player.isBust = false;
-      player.score = 0;
-      player.hand = [];
-      player.bet = 0;
-      player.choice = "";
-    });
-    house.isBust = false;
-    house.score = 0;
-    house.hand = [];
-  }
-
-  // determine winners and pay out bets
-function determineWinners() {
-    let playerHandValue = getHandValue(player.hand);
-    let dealerHandValue = getHandValue(dealer.hand);
-    
-    // determine winner
-    if (playerHandValue > 21 || dealerHandValue === 21 || dealerHandValue < playerHandValue) {
-      // dealer wins
-      dealer.money += player.bet;
-      player.money -= player.bet;
-    } else if (dealerHandValue > 21 || playerHandValue === 21 || playerHandValue > dealerHandValue) {
-      // player wins
-      player.money += player.bet;
-      dealer.money -= player.bet;
-    } else {
-      // tie
-      console.log("It's a tie!");
-    }
-  
-    // pay out side bets (if any)
-    // ...
-  
-    // reset game for the next hand
-    resetGame();
-  }
-  
-  // reset game for the next hand
-  function resetGame() {
-    // reset variables and clear UI
-    player.hand = [];
-    dealer.hand = [];
-    player.bet = 0;
-    // ...
-  
-    // prompt player for a new bet
-    getPlayerBet();
-  }
-  
+    return playerSum
+}
