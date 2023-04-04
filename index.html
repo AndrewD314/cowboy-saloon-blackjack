@@ -1,64 +1,25 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="./css/style.css">
-    <script src="./js/app.js"></script>
-    <title>Cowboy Saloon Blackjack</title>
-</head>
-<body>
-    <div class="container">
-		<div class="header">
-			<h1>Cowboy Saloon Blackjack</h1>
-            <p>Place your bet and try to beat the dealer!</p>
-		</div>
-		<div class="table">
-			<div class="dealer">
-				<h2>Dealer</h2>
-				<div class="hand"></div>
-				<div class="score"></div>
-			</div>
-			<div class="player">
-				<h2>Player</h2>
-				<div class="hand"></div>
-				<div class="score"></div>
-			</div>
-		</div>
-      
-          <div class="game">
-            <div class="player">
-              <h2>Player</h2>
-              <div class="cards">
-                <img src="card-back.png" class="card">
-                <img src="card-back.png" class="card">
-              </div>
-              <p>Score: <span id="player-score">0</span></p>
-            </div>
-      
-            <div class="dealer">
-              <h2>Dealer</h2>
-              <div class="cards">
-                <img src="card-back.png" class="card">
-                <img src="card-back.png" class="card">
-              </div>
-              <p>Score: <span id="dealer-score">0</span></p>
-            </div>
-      
-            <div class="buttons">
-              <button id="deal-button" onclick="deal()">Deal</button>
-              <button id="hit-button" onclick="hit()">Hit</button>
-              <button id="stand-button" onclick="stand()">Stand</button>
-            </div>
-      
-            <div class="outcome">
-              <h2 id="result"></h2>
-              <button id="play-again-button" onclick="reset()">Play again</button>
-            </div>
-          </div>
-      
-	</div>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Black Jack</title>
+        <link rel="stylesheet" href="css/style.css">
+        <script src="app.js"></script>
+    </head>
 
-</body>
+    <body>
+        <h2>Dealer: <span id="dealer-sum"></span></h2>
+        <div id="dealer-cards">
+            <img id="hidden" src="./images/backs/red.svg">
+        </div>
+
+        <h2>You: <span id="your-sum"></span></h2>
+        <div id="your-cards"></div>
+
+        <br>
+        <button id="hit">Hit</button>
+        <button id="stay">Stay</button>
+        <p id="results"></p>
+    </body>
 </html>
