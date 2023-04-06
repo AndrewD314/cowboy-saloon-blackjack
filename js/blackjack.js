@@ -35,6 +35,8 @@ window.onload = function() {
     buildDeck();
     shuffleDeck();
     startGame();
+    // document.getElementById("dealer-sum").innerText = dealerSum;
+    // document.getElementById("your-sum").innerText = yourSum;
 }
 
 function buildDeck() {
@@ -47,7 +49,6 @@ function buildDeck() {
             deck.push(values[j] + "-" + types[i]); //A-C -> K-C, A-D -> K-D
         }
     }
-    // console.log(deck);
 }
 
 function shuffleDeck() {
@@ -64,8 +65,7 @@ function startGame() {
     hidden = deck.pop();
     dealerSum += getValue(hidden);
     dealerAceCount += checkAce(hidden);
-    // console.log(hidden);
-    // console.log(dealerSum);
+   
     while (dealerSum < 17) {
         //<img src="./cards/4-C.png">
         let cardImg = document.createElement("img");
@@ -73,10 +73,15 @@ function startGame() {
         cardImg.src = "./cards/" + card + ".png";
         dealerSum += getValue(card);
         dealerAceCount += checkAce(card);
-        document.getElementById("dealer-cards").append(cardImg);
+        let dealerCards = document.getElementById("dealer-cards")
+        dealerCards.append(cardImg);
+        console.log(dealerCards)
+        console.log('this is the card image:', cardImg)
+        console.log('this is the card: ', card)
     }
-    console.log(dealerSum);
-
+    // console.log(dealerSum);
+    dealerCards.children[0].id = 'hidden'
+    
     for (let i = 0; i < 2; i++) {
         let cardImg = document.createElement("img");
         let card = deck.pop();
@@ -85,8 +90,10 @@ function startGame() {
         yourAceCount += checkAce(card);
         document.getElementById("your-cards").append(cardImg);
     }
+    document.getElementById("dealer-sum").innerText = dealerSum;
+    document.getElementById("your-sum").innerText = yourSum;
 
-    console.log(yourSum);
+    // console.log(yourSum);
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
 
@@ -150,6 +157,8 @@ function handleBet() {
     for (let i = 0; i < dealerCards.length; i++) {
       dealerCardsHtml += `<img src="${dealerCards[i].image}" class="card" />`;
     }
+   
+    console.log('dealers cards: ', dealerCardsHtml)
     dealerCardsEl.innerHTML = dealerCardsHtml;
   
     // Update scores
@@ -196,9 +205,18 @@ function hit() {
 function stay() {
     dealerSum = reduceAce(dealerSum, dealerAceCount);
     yourSum = reduceAce(yourSum, yourAceCount);
+    
+    console.log('this is the dealers sum:', dealerSum)
+    console.log('this is your sum:', yourSum)
+
 
     canHit = false;
-    document.getElementById("hidden").src = "./cards/" + hidden + ".png";
+    let hiddenCard = document.getElementById("hidden") 
+    let dealerCards = document.querySelector('#dealer-cards')
+    console.log('these are dealer cards:', dealerCards)
+
+    console.log("this is hidden card: ", hiddenCard)
+    hiddenCard.src = "./cards/" + hidden + ".png";
 
     let message = "";
     if (yourSum > 21) {
@@ -221,6 +239,8 @@ function stay() {
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
     document.getElementById("results").innerText = message;
+
+
 }
 
 
