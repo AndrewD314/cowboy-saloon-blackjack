@@ -72,23 +72,18 @@ function startGame() {
 }
 
 function hit() {
-    if (!canHit) {
-        return;
+    if (gameOver === false) {
+      let card = deck.pop();
+      playerCards.push(card);
+      playerScore = getScore(playerCards);
+      showPlayerCards();
+      updateScore();
+      if (playerScore > 21) {
+        endGame();
+      }
     }
-
-    let cardImg = document.createElement("img");
-    let card = deck.pop();
-    cardImg.src = "./cards/" + card + ".png";
-    yourSum += getValue(card);
-    yourAceCount += checkAce(card);
-    document.getElementById("your-cards").append(cardImg);
-
-    if (reduceAce(yourSum, yourAceCount) > 21) { //A, J, 8 -> 1 + 10 + 8
-        canHit = false;
-    }
-
-}
-
+  }
+  
 function stay() {
     dealerSum = reduceAce(dealerSum, dealerAceCount);
     yourSum = reduceAce(yourSum, yourAceCount);
