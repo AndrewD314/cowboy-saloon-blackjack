@@ -62,26 +62,24 @@ function shuffleDeck() {
 }
 
 function startGame() {
+    // Draw the hidden card
     hidden = deck.pop();
     dealerSum += getValue(hidden);
     dealerAceCount += checkAce(hidden);
-   
-    while (dealerSum < 17) {
-        //<img src="./cards/4-C.png">
-        let cardImg = document.createElement("img");
-        let card = deck.pop();
-        cardImg.src = "./cards/" + card + ".png";
-        dealerSum += getValue(card);
-        dealerAceCount += checkAce(card);
-        let dealerCards = document.getElementById("dealer-cards")
-        dealerCards.append(cardImg);
-        console.log(dealerCards)
-        console.log('this is the card image:', cardImg)
-        console.log('this is the card: ', card)
-    }
-    // console.log(dealerSum);
-    dealerCards.children[0].id = 'hidden'
-    
+    let hiddenCardImg = document.createElement("img");
+    hiddenCardImg.src = "./cards/BACK.png";
+    hiddenCardImg.id = "hidden";
+    document.getElementById("dealer-cards").appendChild(hiddenCardImg);
+
+    // Draw the second card
+    let cardImg2 = document.createElement("img");
+    let card2 = deck.pop();
+    cardImg2.src = "./cards/" + card2 + ".png";
+    dealerSum += getValue(card2);
+    dealerAceCount += checkAce(card2);
+    document.getElementById("dealer-cards").appendChild(cardImg2);
+
+    // Draw two cards for the player
     for (let i = 0; i < 2; i++) {
         let cardImg = document.createElement("img");
         let card = deck.pop();
@@ -90,14 +88,13 @@ function startGame() {
         yourAceCount += checkAce(card);
         document.getElementById("your-cards").append(cardImg);
     }
+
     document.getElementById("dealer-sum").innerText = dealerSum;
     document.getElementById("your-sum").innerText = yourSum;
-
-    // console.log(yourSum);
     document.getElementById("hit").addEventListener("click", hit);
     document.getElementById("stay").addEventListener("click", stay);
-
 }
+
 
 function handleBet() {
     const betValue = parseInt(betInput.value);
@@ -118,7 +115,7 @@ function handleBet() {
     }
   }
   
-//   betButton.addEventListener('click', handleBet);
+  betButton.addEventListener('click', handleBet);
   
   function resetGame() {
     playerHand = [];
@@ -127,22 +124,22 @@ function handleBet() {
     dealerScore = 0;
     playerAceCount = 0;
     dealerAceCount = 0;
-    // updateScore();
-    // updateDealerScore();
-    // hideDealerScore();
-    // showPlayerScore();
-    // showDealerCardBack();
-    // document.getElementById('dealButton').disabled = false;
-    // document.getElementById('hitButton').disabled = true;
-    // document.getElementById('standButton').disabled = true;
+    updateScore();
+    updateDealerScore();
+    hideDealerScore();
+    showPlayerScore();
+    showDealerCardBack();
+    document.getElementById('dealButton').disabled = false;
+    document.getElementById('hitButton').disabled = true;
+    document.getElementById('standButton').disabled = true;
   }
   
   
-//   playAgainBtn.addEventListener('click', () => {
-//     resetGame();
-//     playerMoney += playerBet * 2;
-//     moneyDisplay.innerText = `Money: $${playerMoney}`;
-//   });
+  playAgainBtn.addEventListener('click', () => {
+    resetGame();
+    playerMoney += playerBet * 2;
+    moneyDisplay.innerText = `Money: $${playerMoney}`;
+  });
 
   function updateUi() {
     // Update player's cards
