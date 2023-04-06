@@ -177,7 +177,7 @@ function playAgain() {
 document.getElementById("play-again").addEventListener("click", playAgain)
 document.addEventListener("DOMContentLoaded", function() {
     // Add event listener to play again button
-    let playAgainButton = document.getElementById("play-again-button");
+    let playAgainButton = document.getElementById("play-again");
     playAgainButton.addEventListener("click", function() {
       // Code to play the game again
     });
