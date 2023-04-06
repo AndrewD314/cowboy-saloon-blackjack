@@ -15,22 +15,21 @@ let canHit = true; //allows the player (you) to draw while yourSum <= 21
 let playerBet = 0;
 let playerMoney = 100;
 
-const betInput = document.getElementById('bet-input');
-const betButton = document.getElementById('bet-button');
-const moneyDisplay = document.getElementById('money-display');
-const dealButton = document.getElementById('deal');
-const hitButton = document.getElementById('hit');
-const standButton = document.getElementById('stay');
-const playAgainButton = document.getElementById('play-again');
-const playerCards = document.getElementById('player-cards');
-const dealerCards = document.getElementById('dealer-cards');
-const playerScoreEl = document.getElementById('player-score');
-const dealerScoreEl = document.getElementById('dealer-score');
-const hitBtn = document.getElementById('hit');
-const standBtn = document.getElementById('stand');
-const newGameBtn = document.getElementById('new-game');
-const betAmountInput = document.getElementById('bet-amount');
-const playAgainBtn = document.getElementById('play-again');
+const betInput = document.getElementById('bet-input')
+const betButton = document.getElementById('bet-button')
+const moneyDisplay = document.getElementById('money-display')
+const hitButton = document.getElementById('hit')
+const standButton = document.getElementById('stay')
+const playerCards = document.getElementById('player-cards')
+const dealerCards = document.getElementById('dealer-cards')
+const playerScoreEl = document.getElementById('player-score')
+const dealerScoreEl = document.getElementById('dealer-score')
+const hitBtn = document.getElementById('hit')
+const standBtn = document.getElementById('stand')
+const newGameBtn = document.getElementById('new-game')
+const betAmountInput = document.getElementById('bet-amount')
+const playAgainBtn = document.getElementById("play-again-button")
+
 
 window.onload = function() {
     buildDeck();
@@ -112,7 +111,7 @@ function handleBet() {
     }
   }
   
-  betButton.addEventListener('click', handleBet);
+//   betButton.addEventListener('click', handleBet);
   
   function resetGame() {
     playerHand = [];
@@ -121,22 +120,22 @@ function handleBet() {
     dealerScore = 0;
     playerAceCount = 0;
     dealerAceCount = 0;
-    updateScore();
-    updateDealerScore();
-    hideDealerScore();
-    showPlayerScore();
-    showDealerCardBack();
-    document.getElementById('dealButton').disabled = false;
-    document.getElementById('hitButton').disabled = true;
-    document.getElementById('standButton').disabled = true;
+    // updateScore();
+    // updateDealerScore();
+    // hideDealerScore();
+    // showPlayerScore();
+    // showDealerCardBack();
+    // document.getElementById('dealButton').disabled = false;
+    // document.getElementById('hitButton').disabled = true;
+    // document.getElementById('standButton').disabled = true;
   }
   
   
-  playAgainButton.addEventListener('click', () => {
-    resetGame();
-    playerMoney += playerBet * 2;
-    moneyDisplay.innerText = `Money: $${playerMoney}`;
-  });
+//   playAgainButton.addEventListener('click', () => {
+//     resetGame();
+//     playerMoney += playerBet * 2;
+//     moneyDisplay.innerText = `Money: $${playerMoney}`;
+//   });
 
   function updateUi() {
     // Update player's cards
@@ -276,19 +275,6 @@ function playAgain() {
     buildDeck()
     shuffleDeck()
     startGame()
+    resetGame()
 }
-document.getElementById("play-again").addEventListener("click", playAgain)
-document.addEventListener("DOMContentLoaded", function() {
-    // Add event listener to play again button
-    let playAgainButton = document.getElementById("play-again");
-    playAgainButton.addEventListener("click", function() {
-      // Code to play the game again
-    });
-  });
-  
-// function playAgain() {
-//     location.reload(); // reloads the page to start a new game
-//   }
-  
-//   document.getElementById("play-again").addEventListener("click", playAgain);
-  
+playAgainBtn.addEventListener('click', playAgain);

@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Black Jack</title>
         <link rel="stylesheet" href="./css/blackjack.css">
-        <script src="./js/blackjack.js"></script>
+        <script defer src="./js/blackjack.js"></script>
     </head>
 
     <body>
@@ -22,12 +22,10 @@
         <div id="dealer-cards"></div>
         <div id="player-score"></div>
         <div id="dealer-score"></div>
-        <button id="dealButton">Deal</button>
         <button id="hit">Hit</button>
         <button id="stay">Stay</button>
-        <button id="new-game">New Game</button>
-        <input type="number" id="bet-amount">
-        <button id="playAgainButton" onclick="resetGame()">Play Again</button>
+        <input type="number" id="bet-amount"/>
+        <button id="play-again-button">Play Again</button>
 
         <p id="results"></p>
 
