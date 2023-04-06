@@ -175,7 +175,14 @@ function playAgain() {
     startGame()
 }
 document.getElementById("play-again").addEventListener("click", playAgain)
-
+document.addEventListener("DOMContentLoaded", function() {
+    // Add event listener to play again button
+    let playAgainButton = document.getElementById("play-again-button");
+    playAgainButton.addEventListener("click", function() {
+      // Code to play the game again
+    });
+  });
+  
 // function playAgain() {
 //     location.reload(); // reloads the page to start a new game
 //   }
