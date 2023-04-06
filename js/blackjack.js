@@ -12,6 +12,13 @@ let cards = [];
 let card = 0;
 let canHit = true; //allows the player (you) to draw while yourSum <= 21
 
+let playerBet = 0;
+let playerMoney = 100;
+
+const betInput = document.getElementById('bet-input');
+const betButton = document.getElementById('bet-button');
+const moneyDisplay = document.getElementById('money-display');
+
 window.onload = function() {
     buildDeck();
     shuffleDeck();
@@ -72,6 +79,43 @@ function startGame() {
     document.getElementById("stay").addEventListener("click", stay);
 
 }
+
+function handleBet() {
+    const betValue = parseInt(betInput.value);
+  
+    if (betValue > playerMoney) {
+      alert('You do not have enough money to make this bet!');
+    } else if (betValue <= 0) {
+      alert('Please enter a valid bet amount!');
+    } else {
+      playerBet = betValue;
+      playerMoney -= playerBet;
+      moneyDisplay.innerText = `Money: $${playerMoney}`;
+      betInput.disabled = true;
+      betButton.disabled = true;
+      dealButton.disabled = false;
+      hitButton.disabled = false;
+      standButton.disabled = false;
+    }
+  }
+  
+  betButton.addEventListener('click', handleBet);
+  
+  function resetGame() {
+    playerBet = 0;
+    betInput.disabled = false;
+    betButton.disabled = false;
+    dealButton.disabled = true;
+    hitButton.disabled = true;
+    standButton.disabled = true;
+  }
+  
+  playAgainButton.addEventListener('click', () => {
+    resetGame();
+    playerMoney += playerBet * 2;
+    moneyDisplay.innerText = `Money: $${playerMoney}`;
+  });
+
 
 function hit() {
     if (!canHit) {
