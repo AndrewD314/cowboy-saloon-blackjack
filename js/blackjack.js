@@ -18,6 +18,19 @@ let playerMoney = 100;
 const betInput = document.getElementById('bet-input');
 const betButton = document.getElementById('bet-button');
 const moneyDisplay = document.getElementById('money-display');
+const dealButton = document.getElementById('deal');
+const hitButton = document.getElementById('hit');
+const standButton = document.getElementById('stay');
+const playAgainButton = document.getElementById('play-again');
+const playerCards = document.getElementById('player-cards');
+const dealerCards = document.getElementById('dealer-cards');
+const playerScoreEl = document.getElementById('player-score');
+const dealerScoreEl = document.getElementById('dealer-score');
+const hitBtn = document.getElementById('hit');
+const standBtn = document.getElementById('stand');
+const newGameBtn = document.getElementById('new-game');
+const betAmountInput = document.getElementById('bet-amount');
+const playAgainBtn = document.getElementById('play-again');
 
 window.onload = function() {
     buildDeck();
@@ -102,13 +115,22 @@ function handleBet() {
   betButton.addEventListener('click', handleBet);
   
   function resetGame() {
-    playerBet = 0;
-    betInput.disabled = false;
-    betButton.disabled = false;
-    dealButton.disabled = true;
-    hitButton.disabled = true;
-    standButton.disabled = true;
+    playerHand = [];
+    dealerHand = [];
+    playerScore = 0;
+    dealerScore = 0;
+    playerAceCount = 0;
+    dealerAceCount = 0;
+    updateScore();
+    updateDealerScore();
+    hideDealerScore();
+    showPlayerScore();
+    showDealerCardBack();
+    document.getElementById('dealButton').disabled = false;
+    document.getElementById('hitButton').disabled = true;
+    document.getElementById('standButton').disabled = true;
   }
+  
   
   playAgainButton.addEventListener('click', () => {
     resetGame();
@@ -116,6 +138,43 @@ function handleBet() {
     moneyDisplay.innerText = `Money: $${playerMoney}`;
   });
 
+  function updateUi() {
+    // Update player's cards
+    let playerCardsHtml = '';
+    for (let i = 0; i < playerCards.length; i++) {
+      playerCardsHtml += `<img src="${playerCards[i].image}" class="card" />`;
+    }
+    playerCardsEl.innerHTML = playerCardsHtml;
+  
+    // Update dealer's cards
+    let dealerCardsHtml = '';
+    for (let i = 0; i < dealerCards.length; i++) {
+      dealerCardsHtml += `<img src="${dealerCards[i].image}" class="card" />`;
+    }
+    dealerCardsEl.innerHTML = dealerCardsHtml;
+  
+    // Update scores
+    playerScoreEl.textContent = `Score: ${getScore(playerCards)}`;
+    dealerScoreEl.textContent = `Score: ${getScore(dealerCards)}`;
+  
+    // Update message
+    if (gameOver) {
+      if (playerWon) {
+        messageEl.textContent = `You won ${betAmount} coins!`;
+      } else if (dealerWon) {
+        messageEl.textContent = 'Dealer wins!';
+      } else {
+        messageEl.textContent = 'Draw!';
+      }
+      hitBtn.disabled = true;
+      standBtn.disabled = true;
+      newGameBtn.disabled = false;
+      betAmountInput.disabled = false;
+    } else {
+      messageEl.textContent = `Bet amount: ${betAmount} coins`;
+    }
+  }
+  
 
 function hit() {
     if (!canHit) {
