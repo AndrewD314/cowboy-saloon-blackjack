@@ -131,7 +131,7 @@ function handleBet() {
   }
   
   
-//   playAgainButton.addEventListener('click', () => {
+//   playAgainBtn.addEventListener('click', () => {
 //     resetGame();
 //     playerMoney += playerBet * 2;
 //     moneyDisplay.innerText = `Money: $${playerMoney}`;
@@ -193,35 +193,53 @@ function hit() {
 }
 
 
-function stay() {
-    dealerSum = reduceAce(dealerSum, dealerAceCount);
-    yourSum = reduceAce(yourSum, yourAceCount);
+// function stay() {
+//     dealerSum = reduceAce(dealerSum, dealerAceCount);
+//     yourSum = reduceAce(yourSum, yourAceCount);
 
-    canHit = false;
-    document.getElementById("hidden").src = "./cards/" + hidden + ".png";
+//     canHit = false;
+//     document.getElementById("hidden").src = "./cards/" + hidden + ".png";
 
-    let message = "";
-    if (yourSum > 21) {
-        message = "You Lose!";
-    }
-    else if (dealerSum > 21) {
-        message = "You win!";
-    }
-    //both you and dealer <= 21
-    else if (yourSum == dealerSum) {
-        message = "Tie!";
-    }
-    else if (yourSum > dealerSum) {
-        message = "You Win!";
-    }
-    else if (yourSum < dealerSum) {
-        message = "You Lose!";
-    }
+//     let message = "";
+//     if (yourSum > 21) {
+//         message = "You Lose!";
+//     }
+//     else if (dealerSum > 21) {
+//         message = "You win!";
+//     }
+//     //both you and dealer <= 21
+//     else if (yourSum == dealerSum) {
+//         message = "Tie!";
+//     }
+//     else if (yourSum > dealerSum) {
+//         message = "You Win!";
+//     }
+//     else if (yourSum < dealerSum) {
+//         message = "You Lose!";
+//     }
 
-    document.getElementById("dealer-sum").innerText = dealerSum;
-    document.getElementById("your-sum").innerText = yourSum;
-    document.getElementById("results").innerText = message;
-}
+//     document.getElementById("dealer-sum").innerText = dealerSum;
+//     document.getElementById("your-sum").innerText = yourSum;
+//     document.getElementById("results").innerText = message;
+// }
+
+async function stay() {
+    document.querySelector('#hit-button').disabled = true;
+    document.querySelector('#stay-button').disabled = true;
+    while (DEALER_SCORE < PLAYER_SCORE && DEALER_SCORE <= 21 && PLAYER_SCORE <= 21) {
+      let card = getRandomCard();
+      dealCard(card, DEALER);
+      updateScore(card, DEALER);
+      showScore(DEALER);
+      await sleep(1000);
+    }
+    const dealerCard0 = document.querySelector('#dealer-card-0');
+    if (dealerCard0) {
+      dealerCard0.src = null;
+    }
+    showResult(computeWinner());
+  }
+  
 
 function getValue(card) {
     let data = card.split("-"); // "4-C" -> ["4", "C"]
