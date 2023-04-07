@@ -1,3 +1,4 @@
+let gameState;
 
 let dealerSum = 0;
 let yourSum = 0;
@@ -14,9 +15,16 @@ let canHit = true; //allows the player (you) to draw while yourSum <= 21
 
 let playerBet = 0;
 let playerMoney = 100;
+let dealerScore = 0;
 
-const betInput = document.getElementById('bet-input')
-const betButton = document.getElementById('bet-button')
+
+let dealer = {
+    dealerCards: [],
+    dealerScore: 0
+  };
+
+const betInput = document.getElementById('betInput')
+const betButton = document.getElementById('place-bet')
 const moneyDisplay = document.getElementById('money-display')
 const hitButton = document.getElementById('hit')
 const standButton = document.getElementById('stay')
@@ -60,6 +68,15 @@ function shuffleDeck() {
     }
     console.log(deck);
 }
+
+function Game() {
+    this.deck = createDeck();
+    this.playerCards = [];
+    this.dealerCards = []; // add this line to initialize dealerCards
+    this.playerScore = 0;
+    this.dealerScore = 0;
+  }
+  
 
 function startGame() {
     // Draw the hidden card
@@ -106,10 +123,14 @@ function handleBet() {
     } else {
       playerBet = betValue;
       playerMoney -= playerBet;
-      moneyDisplay.innerText = `Money: $${playerMoney}`;
+    //   moneyDisplay.innerText = `Money: $${playerMoney}`;
+      if (moneyDisplay) {
+        moneyDisplay.innerText = `Money: $${playerMoney}`;
+      }
+
       betInput.disabled = true;
       betButton.disabled = true;
-      dealButton.disabled = false;
+    //   dealButton.disabled = false;
       hitButton.disabled = false;
       standButton.disabled = false;
     }
@@ -129,16 +150,132 @@ function handleBet() {
     hideDealerScore();
     showPlayerScore();
     showDealerCardBack();
-    document.getElementById('dealButton').disabled = false;
-    document.getElementById('hitButton').disabled = true;
-    document.getElementById('standButton').disabled = true;
+    
+    document.getElementById('hit').disabled = true;
+    document.getElementById('stay').disabled = true;
+  }
+
+  function calculateScore(cards) {
+    let score = 0;
+    let hasAce = false;
+    
+    for (let i = 0; i < cards.length; i++) {
+      let cardValue = cards[i];
+      if (cardValue === "J" || cardValue === "Q" || cardValue === "K") {
+        score += 10;
+      } else if (cardValue === "A") {
+        hasAce = true;
+        score += 1;
+      } else {
+        score += parseInt(cardValue);
+      }
+    }
+    
+    if (hasAce && score + 10 <= 21) {
+      score += 10;
+    }
+    
+    return score;
+  }
+  
+//   console.log(calculateScore(["A", "2", "3"])); // Output: 6
+  
+function hideDealerScore() {
+    const dealerScoreElement = document.getElementById('dealer-score');
+    dealerScoreElement.innerText = 'Dealer Score: ';
+  }
+  
+  function showDealerCardBack() {
+    const dealerCards = document.querySelectorAll(".dealer-cards .card");
+  
+    // Show the back of each card
+    dealerCards.forEach(card => {
+      card.classList.add("back");
+    });
+  }
+  
+
+  function showPlayerScore() {
+    playerScoreEl.innerHTML = `Player score: ${yourSum}`;
+  }
+
+  function calculateDealerScore() {
+    let dealerCards = dealer.dealerCards;
+    let dealerScore = 0;
+    let aceCount = 0;
+  
+    // calculate the dealer score by adding up the values of their cards
+    for (let i = 0; i < dealerCards.length; i++) {
+      let cardValue = getValue(dealerCards[i]);
+      dealerScore += cardValue;
+      if (cardValue === 11) {
+        aceCount++;
+      }
+    }
+  
+    // if the dealer busts and has aces, count the aces as 1 instead of 11
+    while (dealerScore > 21 && aceCount > 0) {
+      dealerScore -= 10;
+      aceCount--;
+    }
+  
+    // update the dealer object with the calculated score
+    dealer.dealerScore = dealerScore;
+  }
+  
+  
+
+  function updateDealerScore() {
+    let score = 0;
+    for (let i = 0; i < dealerHand.length; i++) {
+      let card = dealerHand[i];
+      score += card.value;
+      if (card.value === 11) {
+        dealerAceCount++;
+      }
+      while (score > 21 && dealerAceCount > 0) {
+        score -= 10;
+        dealerAceCount--;
+      }
+    }
+    dealerScore = score;
+    if (dealerScore <= 21) {
+      showDealerScore();
+    }
+  }  
+
+  function updateScore() {
+    let score = 0;
+    for (let i = 0; i < playerHand.length; i++) {
+      let card = playerHand[i];
+      score += card.value;
+      if (card.value === 11) {
+        playerAceCount++;
+      }
+      while (score > 21 && playerAceCount > 0) {
+        score -= 10;
+        playerAceCount--;
+      }
+    }
+    playerScore = score;
+    if (playerScore <= 21) {
+      showPlayerScore();
+    } else {
+      hidePlayerScore();
+    }
+  }
+
+  function showDealerScore() {
+    
+    const dealerScore = calculateScore(dealerCards);
+    console.log("Dealer score: " + dealerScore);
   }
   
   
   playAgainBtn.addEventListener('click', () => {
     resetGame();
     playerMoney += playerBet * 2;
-    moneyDisplay.innerText = `Money: $${playerMoney}`;
+    moneyDisplay.innerText = `betInput: $${betInput}`;
   });
 
   function updateUi() {
@@ -159,8 +296,8 @@ function handleBet() {
     dealerCardsEl.innerHTML = dealerCardsHtml;
   
     // Update scores
-    playerScoreEl.textContent = `Score: ${getScore(playerCards)}`;
-    dealerScoreEl.textContent = `Score: ${getScore(dealerCards)}`;
+    playerScoreEl.textContent = `Score: ${getScore(playerScore)}`;
+    dealerScoreEl.textContent = `Score: ${getScore(dealerScore)}`;
   
     // Update message
     if (gameOver) {
@@ -210,9 +347,6 @@ function stay() {
     canHit = false;
     let hiddenCard = document.getElementById("hidden") 
     let dealerCards = document.querySelector('#dealer-cards')
-    console.log('these are dealer cards:', dealerCards)
-
-    console.log("this is hidden card: ", hiddenCard)
     hiddenCard.src = "./cards/" + hidden + ".png";
 
     let message = "";
