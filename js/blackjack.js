@@ -25,7 +25,7 @@ let dealer = {
 
 const betInput = document.getElementById('betInput')
 const betButton = document.getElementById('place-bet')
-const moneyDisplay = document.getElementById('money-display')
+const moneyDisplay = document.getElementById('bet-amount')
 const hitButton = document.getElementById('hit')
 const standButton = document.getElementById('stay')
 const playerCards = document.getElementById('player-cards')
@@ -37,6 +37,9 @@ const standBtn = document.getElementById('stand')
 const newGameBtn = document.getElementById('new-game')
 const betAmountInput = document.getElementById('bet-amount')
 const playAgainBtn = document.getElementById("play-again-button")
+const betAmount = document.getElementById('bet-amount');
+
+
 
 
 window.onload = function() {
@@ -271,12 +274,12 @@ function hideDealerScore() {
     console.log("Dealer score: " + dealerScore);
   }
   
-  
-  playAgainBtn.addEventListener('click', () => {
-    resetGame();
-    playerMoney += playerBet * 2;
-    moneyDisplay.innerText = `betInput: $${betInput}`;
-  });
+betAmount.innerText = "New text";
+
+if (moneyDisplay) {
+    moneyDisplay.innerText = `Player Money: $${betAmount}`;
+  }
+
 
   function updateUi() {
     // Update player's cards
